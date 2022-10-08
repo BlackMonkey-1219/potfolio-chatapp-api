@@ -1,0 +1,26 @@
+{
+  "name": "potfolio-chatapp-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlackMonkey-1219/potfolio-chatapp-api.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BlackMonkey-1219/potfolio-chatapp-api/issues"
+  },
+  "homepage": "https://github.com/BlackMonkey-1219/potfolio-chatapp-api#readme",
+  "dependencies": {
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
