@@ -1,14 +1,15 @@
 import express from "express";
+import mongoose from "mongoose";
+import { Server } from "socket.io";
+import dotenv from "dotenv";
+dotenv.config();
 
-const PORT = 5000;
 const app = express();
 app.use(express.json());
 
-app.listen(5000, () => {
-  console.log(`SERVER LISTENING ON PORT: ${PORT}`);
-});
-
-app.get("/", (req, res) => {
-  res.send("CONNECTION ESTABLISHED!");
-  console.log(req.ip);
+mongoose.connect(process.env.DB_URI).then(() => {
+  console.log(`[+] DB CONNECTION ESTABLISHED...`);
+  const HTTP_SERVER = app.listen(process.env.PORT, () => {
+    console.log(`[+] SERVER STARTED ON PORT: ${process.env.PORT}`);
+  });
 });
