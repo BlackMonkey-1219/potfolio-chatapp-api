@@ -19,7 +19,7 @@ const io = new Server(httpServer, {
 var socketsList = [];
 
 // SERVER START
-httpServer.listen(process.env.PORT, () => {
+httpServer.listen(process.env.PORT || 5000, () => {
   console.log(`[+] SERVER STARTED ON PORT: ${process.env.PORT}`);
 });
 
