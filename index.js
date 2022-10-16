@@ -10,10 +10,7 @@ const app = express();
 app.use(express.json());
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: {
-    origin: ["http://localhost:3000", "http://localhost:5000"],
-    credentials: true,
-  },
+  cors: process.env.CORS_URLS,
 });
 
 var socketsList = [];
@@ -31,14 +28,18 @@ app.get("/", (req, res) => {
 io.on("connection", onConnection);
 
 function onConnection(socket) {
+  console.log(`[i] HANDLING CONNECTION FOR: ${socket.id}`);
   preinitializeClient(socket);
 
   socket.on("init", ({ nickname }) => {
+    console.log(`[i] INITIALIZING CLIENT`);
     initializeSocket(socket, nickname);
-    sendParticipantList();
   });
 
+  socket.on("client-ready", () => {});
+
   socket.on("send-msg", ({ msg }) => {
+    console.log(`[i] ${socket.id} SENT: ${msg}`);
     transportMSG(socket, msg);
   });
 
@@ -49,34 +50,36 @@ function onConnection(socket) {
 }
 
 // FUNCTIONS ===================================================================
+function preinitializeClient(socket) {
+  socket.join("room_1");
+  console.log(`[O] CLIENT PREINITIALIZED: ${socket.id}`);
+  sendParticipantList();
+}
+
+function initializeSocket(socket, nickname) {
+  console.log(`[i] ALIAS > ${socket.id} : ${nickname}`);
+  socket.data.name = nickname;
+  socketsList.push(socket);
+  sendParticipantList();
+}
+
 function broadcast(event, content) {
+  console.log(`[i] BROADCASTING: ${event}`);
   io.emit(event, content);
 }
 
 function transportMSG(socket, msg) {
-  console.log(`SOMEONE SENT A MSG`);
+  console.log(`[i] TRANSPORTING: ${socket.id} => ${msg}`);
   socket.to("room_1").emit("recv-msg", { sender: socket.data.name, msg });
-}
-
-function preinitializeClient(socket) {
-  socket.join("room_1");
-  console.log(`[O] NEW CLIENT CONNECTED: ${socket.id}`);
-  socket.data.name = "me";
-}
-
-function initializeSocket(socket, nickname) {
-  console.log(`SETTING <${socket.id}> NAME TO -${nickname}-`);
-  socket.data.name = nickname;
-  socketsList.push(socket);
 }
 
 function sendParticipantList() {
   let participantNames = getParticipantNames();
-  io.emit("recv-list", participantNames);
+  broadcast("recv-list", participantNames);
 }
 
 function getParticipantNames() {
   let names = socketsList.map((socket) => socket.data.name);
-  console.log(names);
+  console.log(`[i] GRABBING PARTICIPANTS NAMES`);
   return names;
 }
