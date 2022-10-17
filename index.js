@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
-  cors: process.env.CORS_URLS,
+  cors: process.env.CORS,
 });
 
 var socketsList = [];
